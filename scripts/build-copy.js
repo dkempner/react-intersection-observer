@@ -28,8 +28,12 @@ packageFieldsToRemove.forEach((field) => {
 });
 
 // Remove 'dist' from the files inside the 'dist' dir, after we move them
-const fields = ['main', 'module', 'unpkg', 'esmodule', 'typings'];
+const fields = ['main', 'module', 'unpkg', 'typings'];
 fields.forEach((key) => (pck[key] = pck[key].replace('dist/', '')));
+const exportFields = ['require', 'default'];
+exportFields.forEach(
+  (key) => (pck.exports[key] = pck.exports[key].replace('dist/', '')),
+);
 
 fs.writeFileSync(
   path.resolve(distDir, 'package.json'),

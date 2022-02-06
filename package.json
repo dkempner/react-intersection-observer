@@ -4,9 +4,12 @@
   "description": "Monitor if a component is inside the viewport, using IntersectionObserver API",
   "source": "src/index.tsx",
   "main": "dist/react-intersection-observer.js",
-  "module": "dist/react-intersection-observer.m.js",
-  "esmodule": "dist/react-intersection-observer.esm.js",
+  "module": "dist/react-intersection-observer.module.js",
   "unpkg": "dist/react-intersection-observer.umd.js",
+  "exports": {
+    "require": "dist/react-intersection-observer.js",
+    "default": "dist/react-intersection-observer.modern.js"
+  },
   "typings": "dist/index.d.ts",
   "author": "Daniel Schmidt",
   "sideEffects": false,
@@ -180,6 +183,7 @@
     "postcss-loader": "^6.1.1",
     "prettier": "^2.3.2",
     "prettier-plugin-pkg": "^0.11.0",
+    "prettier-plugin-tailwindcss": "^0.1.5",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-test-renderer": "^17.0.2",
