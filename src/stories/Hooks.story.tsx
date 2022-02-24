@@ -1,6 +1,7 @@
 import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
 import { IntersectionOptions, InView, useInView } from '../index';
+import { useVisibleTracking } from './useVisibilityTracking';
 import { motion } from 'framer-motion';
 import React, { CSSProperties, useEffect, useRef, useState } from 'react';
 import {
@@ -95,8 +96,16 @@ export default story;
 
 const Template: Story<Props> = ({ style, className, lazy, ...rest }) => {
   const { options, error } = useValidateOptions(rest);
-  const { ref, inView, entry } = useInView(!error ? options : {});
+  const inViewResponse = useInView(
+    !error ? { ...options, threshold: [0, 0.5, 1] } : {},
+  );
+  const { ref, inView, entry } = inViewResponse;
   const [isLoading, setIsLoading] = useState(lazy);
+  useVisibleTracking({
+    firstPixelTrackingEventName: 'first pixel event',
+    viewableTrackingEventName: 'view event',
+    inViewResponse,
+  });
   action('Inview')(inView, entry);
 
   useEffect(() => {
@@ -151,9 +160,7 @@ StartInView.args = {
 
 export const WithRootMargin = Template.bind({});
 WithRootMargin.args = {
-  rootMargin: '-150px 0px 0px 0px',
-  threshold: 0.5,
-  // initialInView: true,
+  rootMargin: '0px 0px 0px 0px',
 };
 
 export const TallerThanViewport = Template.bind({});
