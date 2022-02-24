@@ -75,12 +75,10 @@ function isHalfVisible(entry: InViewHookResponse['entry']) {
     return false;
   }
 
-  const container = entry.rootBounds;
-  const element = entry.boundingClientRect;
+  const intersectionRectHeight = entry.intersectionRect.height;
+  const elementHeight = entry.boundingClientRect.height;
 
-  if (!container) {
-    return false;
-  }
+  console.log({ intersectionRectHeight, elementHeight });
 
-  return container.height - element.top >= element.height / 2;
+  return intersectionRectHeight >= elementHeight / 2;
 }

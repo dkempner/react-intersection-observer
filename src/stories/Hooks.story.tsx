@@ -124,7 +124,7 @@ const Template: Story<Props> = ({ style, className, lazy, ...rest }) => {
     <>
       <div
         style={{
-          height: 150,
+          height: 0,
           width: '100%',
           backgroundColor: 'red',
           zIndex: '1000',
