@@ -9,6 +9,7 @@ interface UseVisibleTrackingOptions {
   viewableTrackingEventName: string;
   trackingProperties?: any;
   inViewResponse: InViewHookResponse;
+  topMargin: number
 }
 
 const useTrackOnce = (eventName: string) => {
@@ -25,6 +26,7 @@ export function useVisibleTracking(options: UseVisibleTrackingOptions): void {
     firstPixelTrackingEventName,
     viewableTrackingEventName,
     inViewResponse,
+    topMargin,
   } = options;
   const [, inView, entry] = inViewResponse;
   const trackFirstPixel = useTrackOnce(`${firstPixelTrackingEventName}`);
@@ -35,17 +37,19 @@ export function useVisibleTracking(options: UseVisibleTrackingOptions): void {
 
   const isLeavingVisible = entry?.isIntersecting === false;
 
+  const onePixViz = isOnePixelVisible(entry, topMargin)
+
   if (
     firstPixelTrackingEventName.length !== 0 &&
     viewableTrackingEventName.length !== 0
   ) {
-    if (inView && !productInView) {
+    if (inView && !productInView && onePixViz) {
       trackFirstPixel();
       setThreshold(HALF_VISIBLE_THRESHOLD);
       setProductInView(true);
     }
   }
-  const halfVisible = isHalfVisible(entry);
+  const halfVisible = isHalfVisible(entry, topMargin);
 
   // because we want to use a timer
   useEffect(() => {
@@ -70,15 +74,32 @@ export function useVisibleTracking(options: UseVisibleTrackingOptions): void {
   }, [halfVisible, isLeavingVisible, threshold, trackVisible]);
 }
 
-function isHalfVisible(entry: InViewHookResponse['entry']) {
+function isOnePixelVisible(entry: InViewHookResponse['entry'], topMargin: number) {
   if (!entry) {
     return false;
   }
 
-  const intersectionRectHeight = entry.intersectionRect.height;
-  const elementHeight = entry.boundingClientRect.height;
+  const { height, top, bottom} = entry.boundingClientRect;
+  const intersectionRectHeight = entry.intersectionRect.height
+  const modifiedIntersectionRectHeight = intersectionRectHeight - (top < topMargin ? topMargin : 0)
+  const answer = modifiedIntersectionRectHeight > 0
 
-  console.log({ intersectionRectHeight, elementHeight });
+  console.log({ intersectionRectHeight, modifiedIntersectionRectHeight, height, top, bottom, topMargin, answer });
 
-  return intersectionRectHeight >= elementHeight / 2;
+  return answer
+}
+
+function isHalfVisible(entry: InViewHookResponse['entry'], topMargin: number) {
+  if (!entry) {
+    return false;
+  }
+
+  const { height, top, bottom} = entry.boundingClientRect;
+  const intersectionRectHeight = entry.intersectionRect.height
+  const modifiedIntersectionRectHeight = intersectionRectHeight - (top < topMargin ? topMargin : 0)
+  const answer = modifiedIntersectionRectHeight >= height / 2;
+
+  // console.log({ intersectionRectHeight, modifiedIntersectionRectHeight, height, top, bottom, topMargin, answer });
+
+  return answer
 }

@@ -105,6 +105,7 @@ const Template: Story<Props> = ({ style, className, lazy, ...rest }) => {
     firstPixelTrackingEventName: 'first pixel event',
     viewableTrackingEventName: 'view event',
     inViewResponse,
+    topMargin: 150,
   });
   action('Inview')(inView, entry);
 
@@ -124,7 +125,7 @@ const Template: Story<Props> = ({ style, className, lazy, ...rest }) => {
     <>
       <div
         style={{
-          height: 0,
+          height: 150,
           width: '100%',
           backgroundColor: 'red',
           zIndex: '1000',
